@@ -50,4 +50,26 @@ describe('broccoli-file-mover', function(){
       expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(expected);
     });
   })
+
+  it('accepts a hash of src -> dest pairs', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      files: {
+        '/lib/main.js': '/sample-ember-style-package.js',
+        '/lib/core.js': '/some-random-thing.js'
+      }
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var main = fs.readFileSync(sourcePath + '/lib/main.js');
+      var core = fs.readFileSync(sourcePath + '/lib/core.js');
+
+      expect(fs.readFileSync(dir + '/sample-ember-style-package.js')).to.eql(main);
+      expect(fs.readFileSync(dir + '/some-random-thing.js')).to.eql(core);
+
+      expect(fs.existsSync(dir + '/lib/main.js')).to.not.be.ok();
+      expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();
+    });
+  })
 });

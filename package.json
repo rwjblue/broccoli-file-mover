@@ -9,6 +9,9 @@
     "type": "git",
     "url": "https://github.com/rjackson/broccoli-file-mover.git"
   },
+  "scripts": {
+    "test": "mocha tests/"
+  },
   "keywords": [
     "broccoli-plugin",
     "javascript"

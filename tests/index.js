@@ -7,7 +7,6 @@ var root = process.cwd();
 
 var fs = require('fs');
 var broccoli = require('broccoli');
-var pickFiles = require('broccoli-static-compiler');
 
 var builder;
 

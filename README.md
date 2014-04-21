@@ -13,6 +13,10 @@ var tree = moveFile('app', {
 });
 ```
 
+## ZOMG!!! TESTS?!?!!?
+
+I know, right?
+
 ## Documentation
 
 ### `moveFile(inputTree, options)`

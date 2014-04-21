@@ -47,3 +47,7 @@ Should the file be copied?
 
  - If `copy` is `true`, then the source file is left in the tree (this might be useful to output both a non-minified and minified version).
  - If `copy` is `false`, then the source file is removed after it has been copied (essentially making this a `move` operation).
+
+## License
+
+This project is distributed under the MIT license.

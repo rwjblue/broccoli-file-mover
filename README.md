@@ -17,6 +17,12 @@ var tree = moveFile('app', {
 
 I know, right?
 
+Running the tests:
+
+```javascript
+npm test
+```
+
 ## Documentation
 
 ### `moveFile(inputTree, options)`

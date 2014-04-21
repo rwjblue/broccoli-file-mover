@@ -61,10 +61,14 @@ Should the file be copied?
  - If `copy` is `true`, then the source file is left in the tree (this might be useful to output both a non-minified and minified version).
  - If `copy` is `false`, then the source file is removed after it has been copied (essentially making this a `move` operation).
 
-`options.files` *{Object}*
+`options.files` *{Array|Object}*
 
-Provides an object where the key is the source path, and the value is the destination path. This allows specifying more than one
-move/copy operation at a time (and reduced the total number of trees/steps needed if you need to move many files).
+This allows specifying more than one move/copy operation at a time (and reduced the total number of trees/steps
+needed if you need to move many files).
+
+ - If `files` is an object the key is used as the source path, and the value is the destination path. 
+ - If `files` is an array each item must be an object with a `srcFile` and `destFile` property. If `copy` is present it will
+   be used also.
 
 ## License
 

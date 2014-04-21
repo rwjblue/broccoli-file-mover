@@ -29,7 +29,11 @@ Mover.prototype.write = function (readTree, destDir) {
   return readTree(this.inputTree).then(function (srcDir) {
     helpers.copyRecursivelySync(srcDir, destDir);
 
-    if (self.files) {
+    if (Array.isArray(self.files)) {
+      self.files.forEach(function(file) {
+        self._copyFile(destDir, file.srcFile, file.destFile, file.copy);
+      });
+    } else if (self.files) {
       for (var key in self.files) {
         if (self.files.hasOwnProperty(key)) {
           self._copyFile(destDir, key, self.files[key], self.copy);

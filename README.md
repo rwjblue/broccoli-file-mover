@@ -1,5 +1,7 @@
 # Broccoli's File Mover
 
+[![Build Status](https://travis-ci.org/rjackson/broccoli-file-mover.svg?branch=master)](https://travis-ci.org/rjackson/broccoli-file-mover)
+
 ## Installation
 
 ```bash

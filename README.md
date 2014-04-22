@@ -32,17 +32,6 @@ var tree = moveFile('app', {
 });
 ```
 
-## ZOMG!!! TESTS?!?!!?
-
-I know, right?
-
-Running the tests:
-
-```javascript
-npm install
-npm test
-```
-
 ## Documentation
 
 ### `moveFile(inputTree, options)`
@@ -78,6 +67,17 @@ needed if you need to move many files).
  - If `files` is an object the key is used as the source path, and the value is the destination path.
  - If `files` is an array each item must be an object with a `srcFile` and `destFile` property. If `copy` is present it will
    be used also.
+
+## ZOMG!!! TESTS?!?!!?
+
+I know, right?
+
+Running the tests:
+
+```javascript
+npm install
+npm test
+```
 
 ## License
 

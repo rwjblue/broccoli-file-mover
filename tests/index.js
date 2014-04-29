@@ -51,6 +51,46 @@ describe('broccoli-file-mover', function(){
     });
   })
 
+  it('moves a directory from srcFile to destFile by default', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      srcFile: '/lib',
+      destFile: '/other'
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var main = fs.readFileSync(sourcePath + '/lib/main.js');
+      var core = fs.readFileSync(sourcePath + '/lib/core.js');
+
+      expect(fs.readFileSync(dir + '/other/main.js')).to.eql(main);
+      expect(fs.readFileSync(dir + '/other/core.js')).to.eql(core);
+
+      expect(fs.existsSync(dir + '/lib')).to.not.be.ok();
+    });
+  });
+
+  it('copies a directory from srcFile to destFile', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      srcFile: '/lib',
+      destFile: '/other',
+      copy: true
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var main = fs.readFileSync(sourcePath + '/lib/main.js');
+      var core = fs.readFileSync(sourcePath + '/lib/core.js');
+
+      expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(main);
+      expect(fs.readFileSync(dir + '/lib/core.js')).to.eql(core);
+
+      expect(fs.readFileSync(dir + '/other/main.js')).to.eql(main);
+      expect(fs.readFileSync(dir + '/other/core.js')).to.eql(core);
+    });
+  });
+
   describe('accepts a hash of objects as the `file` option', function() {
     it('moves each file referenced', function(){
       var sourcePath = 'tests/fixtures/sample-ember-style-package';

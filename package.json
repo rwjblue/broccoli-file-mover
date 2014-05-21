@@ -1,6 +1,6 @@
 {
   "name": "broccoli-file-mover",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Broccoli plugin to move a single file.",
   "main": "index.js",
   "author": "Robert Jackson",

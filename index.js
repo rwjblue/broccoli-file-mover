@@ -17,11 +17,13 @@ function Mover (inputTree, options) {
 };
 
 Mover.prototype._copyFile = function (directory, source, destination, leaveOriginal) {
-  helpers.copyRecursivelySync(
-    path.join(directory, source),
-    path.join(directory, destination));
+  var sourcePath = path.join(directory, source);
+  var destinationPath = path.join(directory, destination);
 
-  if (!leaveOriginal) { rimraf.sync(path.join(directory, source)); }
+  rimraf.sync(destinationPath);
+  helpers.copyRecursivelySync(sourcePath, destinationPath);
+
+  if (!leaveOriginal) { rimraf.sync(sourcePath); }
 };
 
 Mover.prototype.updateCache = function (srcDir, destDir) {

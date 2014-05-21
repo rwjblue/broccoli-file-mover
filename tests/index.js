@@ -91,6 +91,40 @@ describe('broccoli-file-mover', function(){
     });
   });
 
+  it('can create a file in a directory that didn\'t previously exist', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      srcFile: '/lib/main.js',
+      destFile: '/non-root-dir/sample-ember-style-package.js',
+      copy: true
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var expected = fs.readFileSync(sourcePath + '/lib/main.js');
+
+      expect(fs.readFileSync(dir + '/non-root-dir/sample-ember-style-package.js')).to.eql(expected);
+      expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(expected);
+    });
+  })
+
+  it('can be used to overwrite a file', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      srcFile: '/lib/main.js',
+      destFile: '/lib/core.js',
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var expected = fs.readFileSync(sourcePath + '/lib/main.js');
+
+      expect(fs.readFileSync(dir + '/lib/core.js')).to.eql(expected);
+
+      expect(fs.existsSync(dir + '/lib/main.js')).to.not.be.ok();
+    });
+  })
+
   describe('accepts a hash of objects as the `file` option', function() {
     it('moves each file referenced', function(){
       var sourcePath = 'tests/fixtures/sample-ember-style-package';
@@ -108,6 +142,28 @@ describe('broccoli-file-mover', function(){
 
         expect(fs.readFileSync(dir + '/sample-ember-style-package.js')).to.eql(main);
         expect(fs.readFileSync(dir + '/some-random-thing.js')).to.eql(core);
+
+        expect(fs.existsSync(dir + '/lib/main.js')).to.not.be.ok();
+        expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();
+      });
+    })
+
+    it('can create a file in a directory that didn\'t previously exist', function(){
+      var sourcePath = 'tests/fixtures/sample-ember-style-package';
+      var tree = moveFile(sourcePath, {
+        files: {
+          '/lib/main.js': '/blammo/dir/sample-ember-style-package.js',
+          '/lib/core.js': '/other/stupid-place/some-random-thing.js'
+        }
+      });
+
+      builder = new broccoli.Builder(tree);
+      return builder.build().then(function(dir) {
+        var main = fs.readFileSync(sourcePath + '/lib/main.js');
+        var core = fs.readFileSync(sourcePath + '/lib/core.js');
+
+        expect(fs.readFileSync(dir + '/blammo/dir/sample-ember-style-package.js')).to.eql(main);
+        expect(fs.readFileSync(dir + '/other/stupid-place/some-random-thing.js')).to.eql(core);
 
         expect(fs.existsSync(dir + '/lib/main.js')).to.not.be.ok();
         expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();

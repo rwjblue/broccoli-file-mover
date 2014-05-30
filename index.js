@@ -9,11 +9,14 @@ Mover.prototype.constructor = Mover;
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
 
+  options ||= {};
   this.inputTree = inputTree;
-  this.files     = options.files;
-  this.srcFile   = options.srcFile;
-  this.destFile  = options.destFile;
-  this.copy      = options.copy;
+
+  for (var key in options) {
+    if (options.hasOwnProperty(key)) {
+      this[key] = options[key]
+    }
+  }
 };
 
 Mover.prototype._copyFile = function (directory, source, destination, leaveOriginal) {

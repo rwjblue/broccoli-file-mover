@@ -9,7 +9,7 @@ Mover.prototype.constructor = Mover;
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
 
-  options ||= {};
+  options = options || {};
   this.inputTree = inputTree;
 
   for (var key in options) {

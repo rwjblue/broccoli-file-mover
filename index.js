@@ -20,33 +20,35 @@ function Mover (inputTree, options) {
 Mover.prototype.constructor = Mover;
 Mover.prototype = Object.create(CachingWriter.prototype);
 
-Mover.prototype._copyFile = function (directory, source, destination, leaveOriginal) {
-  var sourcePath = path.join(directory, source);
-  var destinationPath = path.join(directory, destination);
+Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination, leaveOriginal) {
+  var sourcePath = path.join(sourceDirectory, source);
+  var destinationPath = path.join(destinationDirectory, destination);
 
   rimraf.sync(destinationPath);
   helpers.copyRecursivelySync(sourcePath, destinationPath);
 
-  if (!leaveOriginal) { rimraf.sync(sourcePath); }
+  if (!leaveOriginal) { rimraf.sync(path.join(destinationDirectory, source)); }
 };
 
 Mover.prototype.updateCache = function (srcDir, destDir) {
   var self = this;
 
-  helpers.copyRecursivelySync(srcDir, destDir);
+  if (self.duplicate !== false) {
+    helpers.copyRecursivelySync(srcDir, destDir);
+  }
 
   if (Array.isArray(self.files)) {
     self.files.forEach(function(file) {
-      self._copyFile(destDir, file.srcFile, file.destFile, file.copy);
+      self._copyFile(srcDir, destDir, file.srcFile, file.destFile, file.copy);
     });
   } else if (self.files) {
     for (var key in self.files) {
       if (self.files.hasOwnProperty(key)) {
-        self._copyFile(destDir, key, self.files[key], self.copy);
+        self._copyFile(srcDir, destDir, key, self.files[key], self.copy);
       }
     }
   } else {
-    self._copyFile(destDir, self.srcFile, self.destFile, self.copy);
+    self._copyFile(srcDir, destDir, self.srcFile, self.destFile, self.copy);
   }
 };
 

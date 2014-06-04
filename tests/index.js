@@ -125,6 +125,24 @@ describe('broccoli-file-mover', function(){
     });
   })
 
+  it('does not copy all of the inputTree if duplicate is false', function(){
+    var sourcePath = 'tests/fixtures/sample-ember-style-package';
+    var tree = moveFile(sourcePath, {
+      srcFile: '/lib/main.js',
+      destFile: '/sample-ember-style-package.js',
+      duplicate: false
+    });
+
+    builder = new broccoli.Builder(tree);
+    return builder.build().then(function(dir) {
+      var expected = fs.readFileSync(sourcePath + '/lib/main.js');
+
+      expect(fs.readFileSync(dir + '/sample-ember-style-package.js')).to.eql(expected);
+
+      expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();
+    });
+  })
+
   describe('accepts a hash of objects as the `file` option', function() {
     it('moves each file referenced', function(){
       var sourcePath = 'tests/fixtures/sample-ember-style-package';

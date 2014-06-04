@@ -4,8 +4,6 @@ var rimraf = require('rimraf');
 var CachingWriter = require('broccoli-caching-writer');
 var helpers = require('broccoli-kitchen-sink-helpers')
 
-Mover.prototype = Object.create(CachingWriter.prototype);
-Mover.prototype.constructor = Mover;
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
 
@@ -18,6 +16,9 @@ function Mover (inputTree, options) {
     }
   }
 };
+
+Mover.prototype.constructor = Mover;
+Mover.prototype = Object.create(CachingWriter.prototype);
 
 Mover.prototype._copyFile = function (directory, source, destination, leaveOriginal) {
   var sourcePath = path.join(directory, source);

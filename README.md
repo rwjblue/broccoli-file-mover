@@ -61,6 +61,15 @@ Should the file be copied?
 
 ---
 
+`options.duplicate` *{true,false}*
+
+Should the source full contents of the input tree be duplicated into the returned tree?
+
+ - If `true`, then the contents of the input tree is copied over into the new tree.
+ - If `false`, then only the files being moved are worked on.
+
+---
+
 `options.files` *{Array|Object}*
 
 This allows specifying more than one move/copy operation at a time (and reduced the total number of trees/steps

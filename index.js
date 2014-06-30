@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var CachingWriter = require('broccoli-caching-writer');
 var helpers = require('broccoli-kitchen-sink-helpers')
@@ -23,9 +24,14 @@ Mover.prototype = Object.create(CachingWriter.prototype);
 Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination, leaveOriginal) {
   var sourcePath = path.join(sourceDirectory, source);
   var destinationPath = path.join(destinationDirectory, destination);
+  var destinationDirname = path.dirname(destinationPath);
 
   rimraf.sync(destinationPath);
-  helpers.copyRecursivelySync(sourcePath, destinationPath);
+  if (!fs.existsSync(destinationDirname)) {
+    mkdirp.sync(destinationDirname);
+  }
+
+  helpers.symlinkOrCopyPreserveSync(sourcePath, destinationPath);
 
   if (!leaveOriginal) { rimraf.sync(path.join(destinationDirectory, source)); }
 };

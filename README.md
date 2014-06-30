@@ -52,24 +52,6 @@ The path to move the file to (final location).
 
 ---
 
-`options.copy` *{true,false}*
-
-Should the file be copied?
-
- - If `copy` is `true`, then the source file is left in the tree (this might be useful to output both a non-minified and minified version).
- - If `copy` is `false`, then the source file is removed after it has been copied (essentially making this a `move` operation).
-
----
-
-`options.duplicate` *{true,false}*
-
-Should the source full contents of the input tree be duplicated into the returned tree?
-
- - If `true`, then the contents of the input tree is copied over into the new tree.
- - If `false`, then only the files being moved are worked on.
-
----
-
 `options.files` *{Array|Object}*
 
 This allows specifying more than one move/copy operation at a time (and reduced the total number of trees/steps

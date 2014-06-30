@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
-var CachingWriter = require('broccoli-caching-writer');
+var Writer = require('broccoli-writer');
 var helpers = require('broccoli-kitchen-sink-helpers')
 
 function Mover (inputTree, options) {
@@ -19,9 +19,9 @@ function Mover (inputTree, options) {
 };
 
 Mover.prototype.constructor = Mover;
-Mover.prototype = Object.create(CachingWriter.prototype);
+Mover.prototype = Object.create(Writer.prototype);
 
-Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination, leaveOriginal) {
+Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination) {
   var sourcePath = path.join(sourceDirectory, source);
   var destinationPath = path.join(destinationDirectory, destination);
   var destinationDirname = path.dirname(destinationPath);
@@ -32,30 +32,26 @@ Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, sou
   }
 
   helpers.symlinkOrCopyPreserveSync(sourcePath, destinationPath);
-
-  if (!leaveOriginal) { rimraf.sync(path.join(destinationDirectory, source)); }
 };
 
-Mover.prototype.updateCache = function (srcDir, destDir) {
+Mover.prototype.write = function (readTree, destDir) {
   var self = this;
 
-  if (self.duplicate !== false) {
-    helpers.copyRecursivelySync(srcDir, destDir);
-  }
-
-  if (Array.isArray(self.files)) {
-    self.files.forEach(function(file) {
-      self._copyFile(srcDir, destDir, file.srcFile, file.destFile, file.copy);
-    });
-  } else if (self.files) {
-    for (var key in self.files) {
-      if (self.files.hasOwnProperty(key)) {
-        self._copyFile(srcDir, destDir, key, self.files[key], self.copy);
+  return readTree(this.inputTree).then(function(srcDir) {
+    if (Array.isArray(self.files)) {
+      self.files.forEach(function(file) {
+        self._copyFile(srcDir, destDir, file.srcFile, file.destFile);
+      });
+    } else if (self.files) {
+      for (var key in self.files) {
+        if (self.files.hasOwnProperty(key)) {
+          self._copyFile(srcDir, destDir, key, self.files[key]);
+        }
       }
+    } else {
+      self._copyFile(srcDir, destDir, self.srcFile, self.destFile);
     }
-  } else {
-    self._copyFile(srcDir, destDir, self.srcFile, self.destFile, self.copy);
-  }
+  });
 };
 
 module.exports = Mover;

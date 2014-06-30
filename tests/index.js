@@ -34,23 +34,6 @@ describe('broccoli-file-mover', function(){
     });
   })
 
-  it('copies a file from srcFile to destFile', function(){
-    var sourcePath = 'tests/fixtures/sample-ember-style-package';
-    var tree = moveFile(sourcePath, {
-      srcFile: '/lib/main.js',
-      destFile: '/sample-ember-style-package.js',
-      copy: true
-    });
-
-    builder = new broccoli.Builder(tree);
-    return builder.build().then(function(dir) {
-      var expected = fs.readFileSync(sourcePath + '/lib/main.js');
-
-      expect(fs.readFileSync(dir + '/sample-ember-style-package.js')).to.eql(expected);
-      expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(expected);
-    });
-  })
-
   it('moves a directory from srcFile to destFile by default', function(){
     var sourcePath = 'tests/fixtures/sample-ember-style-package';
     var tree = moveFile(sourcePath, {
@@ -70,33 +53,11 @@ describe('broccoli-file-mover', function(){
     });
   });
 
-  it('copies a directory from srcFile to destFile', function(){
-    var sourcePath = 'tests/fixtures/sample-ember-style-package';
-    var tree = moveFile(sourcePath, {
-      srcFile: '/lib',
-      destFile: '/other',
-      copy: true
-    });
-
-    builder = new broccoli.Builder(tree);
-    return builder.build().then(function(dir) {
-      var main = fs.readFileSync(sourcePath + '/lib/main.js');
-      var core = fs.readFileSync(sourcePath + '/lib/core.js');
-
-      expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(main);
-      expect(fs.readFileSync(dir + '/lib/core.js')).to.eql(core);
-
-      expect(fs.readFileSync(dir + '/other/main.js')).to.eql(main);
-      expect(fs.readFileSync(dir + '/other/core.js')).to.eql(core);
-    });
-  });
-
   it('can create a file in a directory that didn\'t previously exist', function(){
     var sourcePath = 'tests/fixtures/sample-ember-style-package';
     var tree = moveFile(sourcePath, {
       srcFile: '/lib/main.js',
-      destFile: '/non-root-dir/sample-ember-style-package.js',
-      copy: true
+      destFile: '/non-root-dir/sample-ember-style-package.js'
     });
 
     builder = new broccoli.Builder(tree);
@@ -104,7 +65,6 @@ describe('broccoli-file-mover', function(){
       var expected = fs.readFileSync(sourcePath + '/lib/main.js');
 
       expect(fs.readFileSync(dir + '/non-root-dir/sample-ember-style-package.js')).to.eql(expected);
-      expect(fs.readFileSync(dir + '/lib/main.js')).to.eql(expected);
     });
   })
 
@@ -125,12 +85,11 @@ describe('broccoli-file-mover', function(){
     });
   })
 
-  it('does not copy all of the inputTree if duplicate is false', function(){
+  it('does not copy all of the inputTree', function(){
     var sourcePath = 'tests/fixtures/sample-ember-style-package';
     var tree = moveFile(sourcePath, {
       srcFile: '/lib/main.js',
-      destFile: '/sample-ember-style-package.js',
-      duplicate: false
+      destFile: '/sample-ember-style-package.js'
     });
 
     builder = new broccoli.Builder(tree);
@@ -194,9 +153,9 @@ describe('broccoli-file-mover', function(){
       var sourcePath = 'tests/fixtures/sample-ember-style-package';
       var tree = moveFile(sourcePath, {
         files: [
-          {srcFile: '/lib/main.js', destFile: '/sample-ember-style-package.js', copy: true},
-          {srcFile: '/lib/main.js', destFile: '/some-other-file.js', copy: false},
-          {srcFile: '/lib/core.js', destFile: '/wat-leaving-me-around.js', copy: true}
+          {srcFile: '/lib/main.js', destFile: '/sample-ember-style-package.js'},
+          {srcFile: '/lib/main.js', destFile: '/some-other-file.js'},
+          {srcFile: '/lib/core.js', destFile: '/wat.js'}
         ]
       });
 
@@ -207,10 +166,10 @@ describe('broccoli-file-mover', function(){
 
         expect(fs.readFileSync(dir + '/sample-ember-style-package.js')).to.eql(expected);
         expect(fs.readFileSync(dir + '/some-other-file.js')).to.eql(expected);
-        expect(fs.readFileSync(dir + '/wat-leaving-me-around.js')).to.eql(core);
+        expect(fs.readFileSync(dir + '/wat.js')).to.eql(core);
 
         expect(fs.existsSync(dir + '/lib/main.js')).to.not.be.ok();
-        expect(fs.existsSync(dir + '/lib/core.js')).to.be.ok();
+        expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();
       });
     })
   });

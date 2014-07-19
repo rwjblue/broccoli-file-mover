@@ -3,7 +3,7 @@ var path = require('path');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var Writer = require('broccoli-writer');
-var helpers = require('broccoli-kitchen-sink-helpers')
+var symlinkOrCopySync = require('symlink-or-copy').sync;
 
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
@@ -31,7 +31,7 @@ Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, sou
     mkdirp.sync(destinationDirname);
   }
 
-  helpers.symlinkOrCopyPreserveSync(sourcePath, destinationPath);
+  symlinkOrCopySync(sourcePath, destinationPath);
 };
 
 Mover.prototype.write = function (readTree, destDir) {

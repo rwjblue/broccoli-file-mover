@@ -58,8 +58,18 @@ This allows specifying more than one move/copy operation at a time (and reduced 
 needed if you need to move many files).
 
  - If `files` is an object the key is used as the source path, and the value is the destination path.
- - If `files` is an array each item must be an object with a `srcFile` and `destFile` property. If `copy` is present it will
-   be used also.
+ - If `files` is an array each item must be an object with a `srcFile` and `destFile` property.
+
+---
+
+`options.copy` *{Boolean}*
+
+By default (on non-Windows platform) *broccoli-file-mover* will create symlinks
+for the files. To force copy, you can set the option `copy: true`.
+
+If `options.files` is an array of objects, then you can set the `copy` option
+for individual files (along with `srcFile` and `destFile`) to overwrite
+`options.copy`.
 
 ## ZOMG!!! TESTS?!?!!?
 

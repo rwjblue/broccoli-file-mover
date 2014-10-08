@@ -17,9 +17,10 @@
     "javascript"
   ],
   "dependencies": {
-    "rimraf": "~2.2.6",
     "broccoli-writer": "~0.1.1",
+    "copy-dereference": "^1.0.0",
     "mkdirp": "~0.5.0",
+    "rimraf": "~2.2.6",
     "symlink-or-copy": "^1.0.0"
   },
   "devDependencies": {

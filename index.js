@@ -4,6 +4,7 @@ var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var Writer = require('broccoli-writer');
 var symlinkOrCopySync = require('symlink-or-copy').sync;
+var copyDereferenceSync = require('copy-dereference').sync;
 
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
@@ -21,7 +22,7 @@ function Mover (inputTree, options) {
 Mover.prototype.constructor = Mover;
 Mover.prototype = Object.create(Writer.prototype);
 
-Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination) {
+Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, source, destination, copy) {
   var sourcePath = path.join(sourceDirectory, source);
   var destinationPath = path.join(destinationDirectory, destination);
   var destinationDirname = path.dirname(destinationPath);
@@ -31,7 +32,11 @@ Mover.prototype._copyFile = function (sourceDirectory, destinationDirectory, sou
     mkdirp.sync(destinationDirname);
   }
 
-  symlinkOrCopySync(sourcePath, destinationPath);
+  if (copy) {
+    copyDereferenceSync(sourcePath, destinationPath);
+  } else {
+    symlinkOrCopySync(sourcePath, destinationPath);
+  }
 };
 
 Mover.prototype.write = function (readTree, destDir) {
@@ -40,16 +45,16 @@ Mover.prototype.write = function (readTree, destDir) {
   return readTree(this.inputTree).then(function(srcDir) {
     if (Array.isArray(self.files)) {
       self.files.forEach(function(file) {
-        self._copyFile(srcDir, destDir, file.srcFile, file.destFile);
+        self._copyFile(srcDir, destDir, file.srcFile, file.destFile, file.copy === true || (file.copy !== false && self.copy));
       });
     } else if (self.files) {
       for (var key in self.files) {
         if (self.files.hasOwnProperty(key)) {
-          self._copyFile(srcDir, destDir, key, self.files[key]);
+          self._copyFile(srcDir, destDir, key, self.files[key], self.copy);
         }
       }
     } else {
-      self._copyFile(srcDir, destDir, self.srcFile, self.destFile);
+      self._copyFile(srcDir, destDir, self.srcFile, self.destFile, self.copy);
     }
   });
 };

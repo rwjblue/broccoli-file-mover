@@ -10,6 +10,8 @@ var broccoli = require('broccoli');
 
 var builder;
 
+process.setMaxListeners(12);
+
 describe('broccoli-file-mover', function(){
   afterEach(function() {
     if (builder) {
@@ -172,5 +174,95 @@ describe('broccoli-file-mover', function(){
         expect(fs.existsSync(dir + '/lib/core.js')).to.not.be.ok();
       });
     })
+  });
+
+  describe('copy (not symlink) files using "copy" option', function() {
+    it('when specifying single file', function(){
+      var sourcePath = 'tests/fixtures/sample-ember-style-package';
+      var tree = moveFile(sourcePath, {
+        srcFile: '/lib/main.js',
+        destFile: '/sample-ember-style-package.js',
+        copy: true
+      });
+
+      builder = new broccoli.Builder(tree);
+      return builder.build().then(function(dir) {
+        expect(fs.statSync(dir + '/sample-ember-style-package.js').isFile()).to.be.ok();
+      });
+    });
+
+    it('when specifying files map', function(){
+      var sourcePath = 'tests/fixtures/sample-ember-style-package';
+      var tree = moveFile(sourcePath, {
+        files: {
+          '/lib/main.js': '/sample-ember-style-package.js',
+          '/lib/core.js': '/wat.js'
+        },
+        copy: true
+      });
+
+      builder = new broccoli.Builder(tree);
+      return builder.build().then(function(dir) {
+        expect(fs.statSync(dir + '/sample-ember-style-package.js').isFile()).to.be.ok();
+        expect(fs.statSync(dir + '/wat.js').isFile()).to.be.ok();
+      });
+    });
+
+    it('when specifying files array and copy for some of the files', function(done){
+      var sourcePath = 'tests/fixtures/sample-ember-style-package';
+      var tree = moveFile(sourcePath, {
+        files: [
+          {srcFile: '/lib/main.js', destFile: '/sample-ember-style-package.js'},
+          {srcFile: '/lib/main.js', destFile: '/some-other-file.js', copy: true},
+          {srcFile: '/lib/core.js', destFile: '/wat.js', copy: false}
+        ]
+      });
+
+      builder = new broccoli.Builder(tree);
+      return builder.build().then(function(dir) {
+        expect(fs.statSync(dir + '/some-other-file.js').isFile()).to.be.ok();
+
+        if (process.platform !== 'win32') {
+          fs.lstat(dir + '/sample-ember-style-package.js', function (err, stats) {
+            expect(stats.isSymbolicLink()).to.be.ok();
+            fs.lstat(dir + '/wat.js', function (err, stats) {
+              expect(stats.isSymbolicLink()).to.be.ok();
+              done();
+            });
+          });
+        } else {
+          console.log('Windows platform: all files are copied (no symlinks)');
+          done();
+        }
+      });
+    });
+
+    it('when specifying files array and copy as a global option with some overwrites', function(done){
+      var sourcePath = 'tests/fixtures/sample-ember-style-package';
+      var tree = moveFile(sourcePath, {
+        files: [
+          {srcFile: '/lib/main.js', destFile: '/sample-ember-style-package.js'},
+          {srcFile: '/lib/main.js', destFile: '/some-other-file.js', copy: true},
+          {srcFile: '/lib/core.js', destFile: '/wat.js', copy: false}
+        ],
+        copy: true
+      });
+
+      builder = new broccoli.Builder(tree);
+      return builder.build().then(function(dir) {
+        expect(fs.statSync(dir + '/sample-ember-style-package.js').isFile()).to.be.ok();
+        expect(fs.statSync(dir + '/some-other-file.js').isFile()).to.be.ok();
+
+        if (process.platform !== 'win32') {
+          fs.lstat(dir + '/wat.js', function (err, stats) {
+            expect(stats.isSymbolicLink()).to.be.ok();
+            done();
+          });
+        } else {
+          console.log('Windows platform: all files are copied (no symlinks)');
+          done();
+        }
+      });
+    });
   });
 });

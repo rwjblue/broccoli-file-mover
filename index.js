@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var chalk = require('chalk');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var Writer = require('broccoli-writer');
@@ -7,6 +8,8 @@ var symlinkOrCopySync = require('symlink-or-copy').sync;
 
 function Mover (inputTree, options) {
   if (!(this instanceof Mover)) return new Mover(inputTree, options);
+
+  console.log(chalk.red('broccoli-file-mover has been deprecated. Please use broccoli-funnel instead.'));
 
   options = options || {};
   this.inputTree = inputTree;

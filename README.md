@@ -1,6 +1,35 @@
 # Broccoli's File Mover
 
+**This project has been replaced by [broccoli-funnel](https://github.com/rwjblue/broccoli-funnel). Please see migration process below.**
+
 [![Build Status](https://travis-ci.org/rjackson/broccoli-file-mover.svg?branch=master)](https://travis-ci.org/rjackson/broccoli-file-mover)
+
+## Migrating to broccoli-funnel
+
+Instead of the following:
+
+```javascript
+var tree = moveFile('packages/ember-metal/lib', {
+  srcFile: 'main.js',
+  destFile: '/ember-metal.js'
+});
+```
+
+You would use:
+
+```javascript
+var tree = new Funnel('packages/ember-metal/lib', {
+  destDir: 'ember-metal',
+
+  getDestinationPath: function(relativePath) {
+    if (relativePath === 'main.js') {
+      return 'ember-metal.js';
+    }
+
+    return relativePath;
+  }
+});
+```
 
 ## Installation
 
